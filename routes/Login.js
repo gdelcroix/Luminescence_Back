@@ -16,7 +16,7 @@ function isPhone(identifier) {
     return identifier.length === 10 && !isNaN(identifier);
 }
 
-router.post('/loginUser', async (req, res) => {
+router.post('/connexion', async (req, res) => {
     try {
         const { identifier, mdp } = req.body;
 
