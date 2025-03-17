@@ -12,17 +12,21 @@ const planningRoutes = require('../routes/Planning');
 const rappelRdvRoutes = require('../routes/RappelRdv');
 const reservationsRoutes = require('../routes/Reservations');
 const venteRoutes = require('../routes/Vente');
+const modulesRoutes = require('../routes/Modules');
+const nodemailerRoute = require('../routes/Contacts');
 
 router.use('/client', clientRoutes);
 router.use('/login', loginRoutes);
 router.use('/produits', produitsRoutes);
 router.use('/disponibilite', disponibiliteRoutes);
 router.use('/detailVente', detailVenteRoutes);
-router.use('gere', gereRoutes);
+router.use('/gere', gereRoutes);
 router.use('/paiement', paiementRoutes);
 router.use('/planning', planningRoutes);
 router.use('/rappelRdv', rappelRdvRoutes);
 router.use('/reservations', reservationsRoutes);
 router.use('/vente', venteRoutes);
+router.use('/modules', modulesRoutes);
+router.use('/contact', nodemailerRoute);
 
 module.exports = router;

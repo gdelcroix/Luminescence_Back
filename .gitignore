@@ -25,7 +25,7 @@ jspm_packages/
 
 # tests & lock
 __tests__/
-*lock.json
+package-lock.json
 
 # Optional eslint cache
 .eslintcache
@@ -50,3 +50,5 @@ out
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 .vscode
+package-lock.json
+package-lock.json

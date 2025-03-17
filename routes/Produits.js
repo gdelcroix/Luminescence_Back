@@ -16,8 +16,13 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/add', async (req, res) => {
+  const { Nom_Produit, Description, Catégorie, Prix, Stock, Date_Péremption, Visible, Image} = req.body;
+  const ajoutDate = new Date();
+  const dernièreModif = ajoutDate;
+
   try {
-    const [result] = await bdd.promise().query('INSERT INTO produit SET ?', [req.body]);
+    const [result] = await bdd.promise().query('INSERT INTO produit (Nom_Produit, Description, Catégorie, Prix, Stock, Date_Péremption, Visible, Image, Date_Création, Dernière_Modification) VALUES (?,?,?,?,?,?,?,?,?,?)', [Nom_Produit, Description, Catégorie, Prix, Stock, Date_Péremption, Visible, Image,ajoutDate,dernièreModif]);
+    console.log('add :',result);
     res.status(201).json({ message: 'Produit ajouté avec succès', result });
   } catch (error) {
     console.error(error);
@@ -26,8 +31,14 @@ router.post('/add', async (req, res) => {
 });
 
 router.put('/update/:id', async (req, res) => {
+  const params = req.body;
+  const keys = Object.keys(params);
+  const values = Object.values(params);
+  values.push(req.params.id);
+  const setBuild = keys.map(key => `${key} = ?`).join(', ');
+  const sql = `UPDATE produit SET ${setBuild} WHERE ID_Produit =?`;
   try {
-    const [result] = await bdd.promise().query('UPDATE produit SET ? WHERE id = ?', [req.body, req.params.id]);
+    const [result] = await bdd.promise().query(sql, values);
     res.status(200).json({ message: 'Produit mis à jour avec succès', result });
   } catch (error) {
     console.error(error);
@@ -37,7 +48,7 @@ router.put('/update/:id', async (req, res) => {
 
 router.delete('/delete/:id', async (req, res) => {
   try {
-    const [result] = await bdd.promise().query('DELETE FROM produit WHERE id = ?', [req.params.id]);
+    const [result] = await bdd.promise().query('DELETE FROM produit WHERE ID_Produit = ?', [req.params.id]);
     res.status(200).json({ message: 'Produit supprimé avec succès', result });
   } catch (error) {
     console.error(error);
@@ -46,8 +57,23 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 router.get('/search', async (req, res) => {
+  const params = req.query;
+  const keys = Object.keys(params);
+  const values = Object.values(params).flat();
+
+  const whereBuild = keys.map((key, index) => {
+    if (Array.isArray(params[key])) {
+      return params[key].map(() => `${key} LIKE ?`).join(' OR ');
+      } else {
+        return `${key} LIKE?`;
+      }
+    }).join(' OR ');
+  const sql = `SELECT * FROM produit WHERE ${whereBuild}`;
+  console.log('requete :',sql);
+
   try {
-    const [results] = await bdd.promise().query('SELECT * FROM produit WHERE ?', [req.query]);
+    console.log('recherche ', sql, values);
+    const [results] = await bdd.promise().query(sql, values);
     res.json(results);
   } catch (error) {
     console.error(error);
@@ -57,7 +83,7 @@ router.get('/search', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const [results] = await bdd.promise().query('SELECT * FROM produit WHERE id = ?', [req.params.id]);
+    const [results] = await bdd.promise().query('SELECT * FROM produit WHERE ID_Produit = ?', [req.params.id]);
     res.json(results[0] || null);
   } catch (error) {
     console.error(error);
